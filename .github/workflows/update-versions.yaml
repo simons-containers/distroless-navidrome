@@ -23,15 +23,19 @@ jobs:
           timeout_minutes: 10
           command: |
             set -uo pipefail
-            NAVIDROME=$(git ls-remote --tags https://github.com/navidrome/navidrome.git/  \
-              | awk -F/ '{print $3}' \
-              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
-              | sed 's/^v//' \
-              | sort -V \
-              | tail -1)
+            NAVIDROME=$(git ls-remote --tags https://github.com/navidrome/navidrome.git/ \
+              | awk -F/ '/v[0-9\.]+$/ {gsub("v", ""); print $3}' \
+              | sort -V | tail -1)
   
-            yq -i ".navidrome= \"$NAVIDROME\"" versions.yaml
-            git diff versions.yaml
+            : ${NAVIDROME:?}
+  
+            jq \
+              --arg navidrome "$NAVIDROME" \
+              '
+                .navidrome.version = $navidrome
+              ' sources.json > tmp.json && mv tmp.json sources.json
+
+            git diff sources.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
