@@ -1,17 +1,19 @@
-FROM archlinux:base-devel-20260308.0.497099 AS builder
+FROM cgr.dev/chainguard/curl:latest-dev AS fetch
 
 ARG NAVIDROME_VERSION
+ARG NAVIDROME_RELEASE
 
 WORKDIR /extract/navidrome
-ADD https://github.com/navidrome/navidrome/releases/download/v${NAVIDROME_VERSION}/navidrome_${NAVIDROME_VERSION}_linux_amd64.tar.gz /extract/navidrome/navidrome.tar.gz
-RUN tar xf navidrome.tar.gz \
+RUN curl --silent --show-error --location --output navidrome.tar.gz \
+  "${NAVIDROME_RELEASE}" \
+  && tar xf navidrome.tar.gz \
   && chmod a+x navidrome
 
 FROM scratch
 
 COPY ./passwd /etc/passwd
 COPY ./shadow /etc/shadow
-COPY --from=builder /extract/navidrome/navidrome /bin/navidrome
+COPY --from=fetch /extract/navidrome/navidrome /bin/navidrome
 
 USER navidrome
 WORKDIR /var/lib/navidrome
