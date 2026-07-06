@@ -15,20 +15,6 @@ docker run -it --rm -v ./data:/var/lib/navidrome \
   ghcr.io/simons-containers/distroless-navidrome:latest
 ```
 
-## Building
-
-| Arg | Description |
-|---|---|
-| `NAVIDROME_VERSION` | Version of Navidrome to use
-
-Build container using build-args from versions.yaml:
-
-```bash
-docker build -t \
-  distroless-navidrome:$(yq -r .navidrome versions.yaml) \
-  $(yq -r 'to_entries | .[] | "--build-arg \(.key | ascii_upcase)_VERSION=\(.value)"' versions.yaml) -f Containerfile .
-```
-
 ## License
 
 Repository contents (e.g., `Containerfile`, build scripts, and configuration) are licensed under the **MIT License**.
