@@ -1,6 +1,6 @@
 {
   "navidrome": {
-    "version": "0.63.1",
+    "version": "0.63.2",
     "purl": "pkg:generic/navidrome",
     "release": {
       "url_pattern": "https://github.com/navidrome/navidrome/releases/download/v{version}/navidrome_{version}_linux_amd64.tar.gz"
